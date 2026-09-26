@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Quest Generator Pro</title>
+<style>
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#0f172a,#581c87,#0891b2);min-height:100vh;color:#fff;overflow-x:hidden}
+.wrap{max-width:1200px;margin:auto;padding:30px}
+.hero{text-align:center}
+.hero h1{font-size:64px}
+.panel{background:rgba(255,255,255,.12);backdrop-filter:blur(20px);border-radius:24px;padding:24px}
+select,button{padding:14px;border:none;border-radius:12px}
+button{cursor:pointer;background:#fbbf24;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-top:20px}
+.card{background:rgba(255,255,255,.12);padding:18px;border-radius:18px}
+.bar{height:18px;background:#ffffff33;border-radius:20px;overflow:hidden}
+.fill{height:100%;width:0%;background:#22c55e;transition:.5s}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<h1>⚔️ AI Quest Generator Pro</h1>
+<p>Create playable adventures instantly</p>
+</div>
+
+<div class="panel">
+<select id="world">
+<option>Fantasy</option>
+<option>Cyberpunk</option>
+<option>Space</option>
+</select>
+<button onclick="generate()">Generate Adventure</button>
+
+<div class="grid" id="output"></div>
+
+<h3>XP Progress</h3>
+<div class="bar"><div class="fill" id="xpbar"></div></div>
+</div>
+</div>
+
+<script>
+async function generate(){
+ let r=await fetch('/quest',{
+ method:'POST',
+ headers:{'Content-Type':'application/json'},
+ body:JSON.stringify({world:world.value})
+ });
+ let d=await r.json();
+
+ output.innerHTML=`
+ <div class='card'><h3>📜 Quest</h3>${d.quest}</div>
+ <div class='card'><h3>🧙 NPC</h3>${d.npc}</div>
+ <div class='card'><h3>🏆 Rewards</h3>${d.gold} Gold<br>${d.xp} XP</div>
+ <div class='card'><h3>🎲 Choices</h3>${d.choices.join("<br>")}</div>`;
+
+ xpbar.style.width=Math.min(d.xp/6,100)+'%';
+}
+</script>
+</body>
+</html>
